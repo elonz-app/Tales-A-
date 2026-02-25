@@ -5,9 +5,10 @@
   "scripts": {
     "start": "cd backend && npm install && node server.js",
     "build": "cd backend && npm install",
+    "postinstall": "cd backend && npm install",
     "dev": "cd backend && npm run dev"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": "18.x"
   }
 }
