@@ -372,4 +372,40 @@ class Database {
     }
 }
 
+// ===== FIX THESE METHODS =====
+
+getUserByUsername(username) {
+    return new Promise((resolve, reject) => {
+        this.db.get("SELECT * FROM users WHERE username = ?", [username], (err, row) => {
+            if (err) {
+                console.error('Database error in getUserByUsername:', err);
+                reject(err);
+            } else {
+                resolve(row);
+            }
+        });
+    });
+}
+
+createUser(username, password) {
+    return new Promise((resolve, reject) => {
+        this.db.run(
+            "INSERT INTO users (username, password, level, gems, score, completedLevels) VALUES (?, ?, 1, 100, 0, '[]')",
+            [username, password],
+            function(err) {
+                if (err) {
+                    console.error('Database error in createUser:', err);
+                    reject(err);
+                } else {
+                    // Fetch and return the created user
+                    this.db.get("SELECT * FROM users WHERE id = ?", [this.lastID], (err, row) => {
+                        if (err) reject(err);
+                        else resolve(row);
+                    });
+                }
+            }
+        );
+    });
+}
+
 module.exports = new Database();
