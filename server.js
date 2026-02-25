@@ -21,14 +21,41 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // ===== REST API ENDPOINTS =====
 
-// Health check
-app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'ok', 
-        time: new Date().toISOString(),
-        questions: db.getQuestionCount(),
-        users: db.getUserCount()
-    });
+// Health check with error handling
+app.get('/health', async (req, res) => {
+    try {
+        let questionCount = 0;
+        let userCount = 0;
+        
+        try {
+            questionCount = await db.getQuestionCount();
+        } catch (e) {
+            console.error('Error getting question count:', e);
+        }
+        
+        try {
+            userCount = await db.getUserCount();
+        } catch (e) {
+            console.error('Error getting user count:', e);
+        }
+        
+        res.json({ 
+            status: 'ok', 
+            time: new Date().toISOString(),
+            questions: questionCount,
+            users: userCount,
+            database: db.db ? 'connected' : 'disconnected'
+        });
+    } catch (error) {
+        console.error('Health check error:', error);
+        res.json({ 
+            status: 'degraded', 
+            time: new Date().toISOString(),
+            questions: 0,
+            users: 0,
+            error: error.message
+        });
+    }
 });
 
 // Login
