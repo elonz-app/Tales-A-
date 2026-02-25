@@ -1,0 +1,13 @@
+{
+  "name": "the-tales-quiz",
+  "version": "1.0.0",
+  "description": "The Tales - Ultimate Quiz Game",
+  "scripts": {
+    "start": "cd backend && npm install && node server.js",
+    "build": "cd backend && npm install",
+    "dev": "cd backend && npm run dev"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
