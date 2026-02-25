@@ -262,3 +262,47 @@ server.listen(PORT, () => {
     console.log(`📊 Database: ${db.getQuestionCount()} questions, ${db.getUserCount()} users`);
     console.log(`🌍 Health check: http://localhost:${PORT}/health`);
 });
+// ===== LOGIN ENDPOINT - FIX THIS =====
+app.post('/api/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        
+        console.log('Login attempt:', username); // Add this for debugging
+        
+        // Special admin login
+        if (username === 'admin' && password === 'QuizMaster2024!') {
+            const user = {
+                id: 'admin',
+                username: 'admin',
+                level: 999,
+                gems: 9999,
+                score: 99999,
+                completedLevels: [],
+                isAdmin: true
+            };
+            return res.json({ success: true, user });
+        }
+        
+        // Regular user login/registration
+        let user = await db.getUserByUsername(username);
+        
+        if (!user) {
+            // Create new user
+            user = await db.createUser(username, password);
+            console.log('New user created:', username);
+        } else {
+            // Verify password
+            if (user.password !== password) {
+                return res.json({ success: false, error: 'Invalid password' });
+            }
+        }
+        
+        // Remove password from response
+        const { password: _, ...safeUser } = user;
+        res.json({ success: true, user: safeUser });
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
