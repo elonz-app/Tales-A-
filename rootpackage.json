@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "The Tales - Ultimate Quiz Game",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "cd backend && npm install && node server.js",
     "build": "cd backend && npm install",
-    "heroku-postbuild": "cd backend && npm install"
+    "postinstall": "cd backend && npm install"
   },
   "engines": {
     "node": "18.x",
